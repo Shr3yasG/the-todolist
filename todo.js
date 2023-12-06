@@ -1,4 +1,4 @@
-const tasks = [];
+let tasks = [];
 const tasksList = document.getElementById("list");
 const addTaskInput = document.getElementById("add");
 const tasksCounter = document.getElementById("tasks-counter");
@@ -13,7 +13,9 @@ function addTaskToDOM(task) {
     task.done ? "checked" : " "
   } class="custom-checkbox">
     <label for="${task.id}">${task.text}</label>
-    <img src="https://www.svgrepo.com/show/123434/trash.svg" class="delete" data-id="${task.id}" />
+    <img src="https://www.svgrepo.com/show/123434/trash.svg" class="delete" data-id="${
+      task.id
+    }" />
   
 `;
 
@@ -44,10 +46,14 @@ function toggleTask(taskId) {
   showNotification("could not toggle the task");
 }
 
-function deleteTask(taskId) {
+function deleteTask (taskId) {
   const newTasks = tasks.filter(function (task) {
     return task.id !== taskId;
   });
+
+  tasks = newTasks;
+  renderList();
+  showNotification("Task deleted successfully");
 }
 
 function addTask(task) {
@@ -83,4 +89,23 @@ function handleInputKeypress(e) {
     addTask(task);
   }
 }
-addTaskInput.addEventListener("keyup", handleInputKeypress);
+
+function handleClickListner(e) {
+  const target = e.target;
+
+  if (target.className === "delete") {
+    const taskId = target.dataset.id;
+    deleteTask(taskId);
+    return;
+  } else if (target.className === "custom-checkbox") {
+    const taskId = target.id;
+    toggleTask(taskId);
+    return;
+  }
+}
+function initializeApp() {
+  addTaskInput.addEventListener("keyup", handleInputKeypress);
+  document.addEventListener("click", handleClickListner);
+}
+
+initializeApp();
